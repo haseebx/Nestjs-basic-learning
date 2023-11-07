@@ -8,8 +8,20 @@ import {
   HttpStatus,
   Res,
   Header,
+  Param,
+  Query,
 } from '@nestjs/common';
 import { Request, Response } from 'express'; //use for type
+
+interface VideoParams {
+  id: number;
+  name: string;
+}
+interface QueryParams {
+  name: string;
+  age: number;
+}
+
 @Controller('/users')
 export class UsersController {
   @Get('/profile')
@@ -38,6 +50,26 @@ export class UsersController {
     Res.status(200);
     return {
       res: 'recived response',
+    };
+  }
+
+  @Get('/video/:id/:name')
+  getVideos(@Param() params: VideoParams, @Res() res: Response) {
+    console.log(params.id);
+    res.status(200);
+    return {
+      res: 'recived response',
+    };
+  }
+
+  @Get('/query')
+  getQuery(@Query() query: QueryParams) {
+    //getQuery(@Query('name') query: string) => get only one
+    console.log(query);
+
+    return {
+      res: 'recived response',
+      queryData: query,
     };
   }
 }

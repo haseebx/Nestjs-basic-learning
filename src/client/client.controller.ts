@@ -34,21 +34,29 @@ export class ClientController {
   updateById(
     @Param('id') id: number,
     @Body() updateClientDTO: CreateClientDTO,
+    @Res() res: Response,
   ) {
-    const clientInx = CLIENT.findIndex((client) => client.id === +id);
-    if (!clientInx) {
-      return;
+    const clientIdx = CLIENT.findIndex((client) => client.id === +id);
+
+    // Handle Client Not Found
+    if (clientIdx === -1) {
+      return res.status(404).send({ msg: 'Client not found' });
     }
 
+    // Update fields
+    const clientToUpdate = CLIENT[clientIdx];
     if (updateClientDTO.name) {
-      CLIENT[clientInx].name = updateClientDTO.name;
-    } else if (updateClientDTO.age) {
-      CLIENT[clientInx].age = updateClientDTO.age;
-    } else {
-      CLIENT[clientInx] = updateClientDTO;
+      clientToUpdate.name = updateClientDTO.name;
+    }
+    if (updateClientDTO.age) {
+      clientToUpdate.age = updateClientDTO.age;
     }
 
-    return { res: CLIENT[clientInx] };
+    // Update the client in the array
+    CLIENT[clientIdx] = clientToUpdate;
+
+    // Send success response
+    return res.status(200).send({ res: clientToUpdate });
   }
 
   @Delete('/delete/:id')

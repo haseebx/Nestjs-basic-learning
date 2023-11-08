@@ -10,6 +10,7 @@ import {
   Header,
   Param,
   Query,
+  Body,
 } from '@nestjs/common';
 import { Request, Response } from 'express'; //use for type
 
@@ -71,5 +72,18 @@ export class UsersController {
       res: 'recived response',
       queryData: query,
     };
+  }
+
+  @Post('/videobody')
+  addVideo(@Body() requestData: Record<string, any>, @Res() res: Response) {
+    try {
+      console.log(requestData);
+      res.status(200).send({ success: true, bodyData: requestData });
+      // return { success: true, bodyData: requestData };
+    } catch (error) {
+      console.error(error);
+      res.status(500);
+      return { err: 'bad server' };
+    }
   }
 }

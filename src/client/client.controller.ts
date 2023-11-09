@@ -7,13 +7,20 @@ import {
   Body,
   Param,
   Res,
+  Inject,
 } from '@nestjs/common';
 import { CreateClientDTO } from './dto';
 import { Response } from 'express';
+import { UserStore } from 'src/store/users.store';
 let CLIENT = [];
 
 @Controller('/client')
 export class ClientController {
+  //injecting UserStore here
+  constructor(@Inject(UserStore) private store: any) {
+    console.log(this.store);
+  }
+
   @Post('/add')
   addClient(@Body() createClientDTO: CreateClientDTO) {
     CLIENT.push(createClientDTO);

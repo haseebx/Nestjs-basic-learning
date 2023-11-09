@@ -11,6 +11,7 @@ import {
   Param,
   Query,
   Body,
+  Inject,
 } from '@nestjs/common';
 import { Request, Response } from 'express'; //use for type
 
@@ -25,6 +26,16 @@ interface QueryParams {
 
 @Controller('/users')
 export class UsersController {
+  //dependancy injection value provider simple
+  // constructor(@Inject('DATABASE_NAME') private dbname: string) {
+  //   console.log('xxxxxxx', this.dbname);
+  // }
+
+  //Inject Object into a class
+  constructor(@Inject('ENV_CONFIG') private config: Record<string, any>) {
+    console.log('xxxxxxx', this.config);
+  }
+
   @Get('/profile')
   getProfile(@Req() req: Request, @Res() res: Response) {
     console.log(req.params);

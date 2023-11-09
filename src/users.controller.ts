@@ -14,6 +14,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import { Request, Response } from 'express'; //use for type
+import { ApiTags } from '@nestjs/swagger';
 
 interface VideoParams {
   id: number;
@@ -23,7 +24,7 @@ interface QueryParams {
   name: string;
   age: number;
 }
-
+@ApiTags('User')
 @Controller('/users')
 export class UsersController {
   //dependancy injection value provider simple

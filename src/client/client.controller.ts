@@ -8,12 +8,14 @@ import {
   Param,
   Res,
   Inject,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateClientDTO } from './dto';
 import { Response } from 'express';
 import { UserStore } from 'src/store/users.store';
+import { ApiTags } from '@nestjs/swagger';
 let CLIENT = [];
-
+@ApiTags('Client')
 @Controller('/client')
 export class ClientController {
   //injecting UserStore here
@@ -33,8 +35,17 @@ export class ClientController {
   }
 
   @Get('/get_by_id/:id')
-  getClientById(@Param('id') id: number) {
-    return CLIENT.find((client) => client.id === +id);
+  getClientById(@Param('id') id: number, @Res() res: Response) {
+    const clientIndex = CLIENT.findIndex((client) => {
+      return +client.id === +id;
+    });
+
+    if (clientIndex === -1) {
+      throw new NotFoundException(`Client with ID ${id} not found`);
+    }
+
+    // return { res: CLIENT[clientIndex] };
+    return res.status(200).send({ Client: CLIENT[clientIndex] });
   }
 
   @Put('/update/:id')
@@ -43,7 +54,7 @@ export class ClientController {
     @Body() updateClientDTO: CreateClientDTO,
     @Res() res: Response,
   ) {
-    const clientIdx = CLIENT.findIndex((client) => client.id === +id);
+    const clientIdx = CLIENT.findIndex((client) => +client.id === +id);
 
     // Handle Client Not Found
     if (clientIdx === -1) {
@@ -76,7 +87,7 @@ export class ClientController {
 
     try {
       const deletedClient = CLIENT[clientIdx];
-      CLIENT = CLIENT.filter((client) => client.id !== +id);
+      CLIENT = CLIENT.filter((client) => +client.id !== +id);
 
       res.status(200).send({ msg: 'User Deleted', userDeleted: deletedClient });
     } catch (error) {

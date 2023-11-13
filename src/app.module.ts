@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
-import { ClientController } from './client/client.controller';
 import { UserStore } from './store/users.store';
+import { ClientModule } from './client/client.module';
 
 @Module({
-  controllers: [UsersController, ClientController],
+  imports: [ClientModule],
+  controllers: [UsersController],
   // providers: [{ provide: UserStore, useClass: UserStore }], 1at Method to do dependancy Injection
   providers: [
     //Inject a class in loc container

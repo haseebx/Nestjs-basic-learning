@@ -8,7 +8,10 @@ import {
   Param,
   Res,
   // Inject,
+  ParseIntPipe,
   NotFoundException,
+  HttpStatus,
+  UsePipes,
 } from '@nestjs/common';
 import { CreateClientDTO } from './dto';
 import { Response } from 'express';
@@ -43,11 +46,11 @@ export class ClientController {
   }
 
   @Get('/get_by_id/:id')
-  getClientById(@Param('id') id: number, @Res() res: Response) {
+  getClientById(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     const clients = this.clientService.getClients();
 
     const clientIndex = clients.findIndex((client) => {
-      return +client.id === +id;
+      return +client.id === id;
     });
 
     if (clientIndex === -1) {
@@ -55,13 +58,18 @@ export class ClientController {
     }
 
     // return { res: CLIENT[clientIndex] }; => this is with hardcore logic
+    console.log('xxxxx', typeof id);
 
-    return res.status(200).send({ Client: this.clientService.getClient(+id) }); //done with service
+    return res.status(200).send({ Client: this.clientService.getClient(id) }); //done with service
   }
 
   @Put('/update/:id')
   updateById(
-    @Param('id') id: number,
+    @Param(
+      'id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: number,
     @Body() updateClientDTO: CreateClientDTO,
     @Res() res: Response,
   ) {
@@ -86,11 +94,12 @@ export class ClientController {
     // Send success response
     // return res.status(200).send({ res: clientToUpdate });
 
-    const UC = this.clientService.updateClient(+id, updateClientDTO);
+    const UC = this.clientService.updateClient(id, updateClientDTO);
     return res.status(200).send({ res: 'User Updated', UC });
   }
 
   @Delete('/delete/:id')
+  @UsePipes(ParseIntPipe)
   deleteClient(@Param('id') id: number, @Res() res: Response) {
     // const clientIdx = CLIENT.findIndex((client) => client.id === +id);
 
@@ -106,7 +115,7 @@ export class ClientController {
     // } catch (error) {
     //   return res.status(500).send({ err: error.message });
     // }
-    const DC = this.clientService.deleteClient(+id);
+    const DC = this.clientService.deleteClient(id);
     return res.status(200).send({ res: 'User Deleted', client: DC });
   }
 }

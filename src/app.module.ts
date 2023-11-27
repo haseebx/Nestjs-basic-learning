@@ -2,9 +2,12 @@ import { Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { UserStore } from './store/users.store';
 import { ClientModule } from './client/client.module';
+import { JobModule } from './jobs/job.module';
+// import { RouterModule } from '@nestjs/core';
 
 @Module({
-  imports: [ClientModule],
+  // imports: [ClientModule ,  RouterModule.register([{ path: 'client', module: ClientModule }])], => setting the perfix
+  imports: [ClientModule, JobModule],
   controllers: [UsersController],
   // providers: [{ provide: UserStore, useClass: UserStore }], 1at Method to do dependancy Injection
   providers: [

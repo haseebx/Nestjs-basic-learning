@@ -15,9 +15,7 @@ export class ClientService {
     return Array.from(this.store.values());
   }
   updateClient(id: number, clientUpdates: CreateClientDTO) {
-    // Retrieve the current client object from the store
     const currentClient = this.store.get(id);
-
     const updatedClient = {
       ...currentClient,
       ...clientUpdates,
